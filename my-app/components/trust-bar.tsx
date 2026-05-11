@@ -23,7 +23,11 @@ const FADE_UP = {
   show: (delay = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
+    transition: { 
+      duration: 0.7, 
+      ease: [0.22, 1, 0.36, 1] as const,  // ← add `as const`
+      delay 
+    },
   }),
 };
 
@@ -113,7 +117,8 @@ export default function TrustBar() {
               <motion.div
                 initial={{ scaleX: 0 }}
                 animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.6, delay: 0.3 + i * 0.08, ease: [0.22, 1, 0.36, 1] as const }}
+
                 className="w-8 h-px bg-[#B8714A] my-3 origin-left"
               />
 
