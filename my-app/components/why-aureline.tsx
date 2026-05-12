@@ -1,177 +1,139 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { Sparkles, Shield, MessageCircle, Microscope } from "lucide-react";
 
-const DIFFERENTIATORS = [
+interface Reason {
+  number: string;
+  title: string;
+  description: string;
+  image: string;
+  icon: React.ReactNode;
+}
+
+const reasons: Reason[] = [
   {
     number: "01",
-    title: "No cookie-cutter protocols",
-    body: "Every face is different. Your treatment plan is designed around your anatomy, your goals, and what will actually look right on you — not a standard menu.",
+    title: "Natural Results",
+    description:
+      "We enhance what you have. We don't change who you are. Every treatment is calibrated to preserve your expressions, your character, your identity. The best outcome is when no one can tell you've had work done — they just notice you look refreshed.",
+    image:
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1000&auto=format&fit=crop",
+    icon: <Sparkles size={20} strokeWidth={1.5} />,
   },
   {
     number: "02",
-    title: "Practitioners, not salespeople",
-    body: "We will tell you if a treatment isn't right for you. Our reputation is built on honest consultations and results that hold up over time.",
+    title: "Expert Care",
+    description:
+      "Led by practitioners with 15+ years in aesthetic medicine. Our team combines clinical precision with an artistic eye — because the face is not just anatomy, it's identity. Every injection is deliberate, every placement is considered.",
+    image:
+      "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=1000&auto=format&fit=crop",
+    icon: <Shield size={20} strokeWidth={1.5} />,
   },
   {
     number: "03",
-    title: "Unhurried appointments",
-    body: "We do not overbook. Every appointment is given the time it deserves — from the consultation through to aftercare.",
+    title: "Private Consultation",
+    description:
+      "Every treatment begins with a conversation. We listen to your goals, assess your features, and design a plan that's uniquely yours. No rush, no pressure — just a calm, confidential space to explore what's possible.",
+    image:
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1000&auto=format&fit=crop",
+    icon: <MessageCircle size={20} strokeWidth={1.5} />,
   },
   {
     number: "04",
-    title: "Discretion as standard",
-    body: "A private, calm environment. No waiting rooms full of strangers. Your visit — and your results — remain entirely your own.",
+    title: "Modern Techniques",
+    description:
+      "We invest in the latest non-surgical innovations — from micro-dosing Botox for subtle movement preservation to advanced filler layering for natural volume. Technology serves artistry, never the other way around.",
+    image:
+      "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=1000&auto=format&fit=crop",
+    icon: <Microscope size={20} strokeWidth={1.5} />,
   },
 ];
 
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) { setInView(true); obs.disconnect(); }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return [ref, inView] as const;
+function ReasonBlock({
+  reason,
+  index,
+}: {
+  reason: Reason;
+  index: number;
+}) {
+  const isReversed = index % 2 !== 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      }}
+      className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center ${
+        isReversed ? "lg:flex-row-reverse" : ""
+      }`}
+    >
+      {/* Text */}
+      <div className={isReversed ? "lg:order-2" : ""}>
+        <div className="flex items-center gap-4 mb-6">
+          <span className="text-[#C9A96E]/30 font-serif text-6xl md:text-7xl leading-none">
+            {reason.number}
+          </span>
+          <div className="w-12 h-px bg-[#C9A96E]/30" />
+        </div>
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-[#C9A96E]">{reason.icon}</span>
+          <h3 className="font-serif text-3xl md:text-4xl text-[#1E2A44]">
+            {reason.title}
+          </h3>
+        </div>
+        <p className="text-stone-500 font-sans font-light leading-[1.8] text-base md:text-lg max-w-lg">
+          {reason.description}
+        </p>
+      </div>
+
+      {/* Image */}
+      <div className={isReversed ? "lg:order-1" : ""}>
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-[1.02]"
+            style={{ backgroundImage: `url('${reason.image}')` }}
+          />
+          <div className="absolute inset-0 bg-[#1E2A44]/5" />
+        </div>
+      </div>
+    </motion.div>
+  );
 }
 
 export default function WhyAureline() {
-  const [sectionRef, inView] = useInView(0.1);
-
   return (
-    <section
-      ref={sectionRef}
-      className="bg-[#FAF8F5] py-24 lg:py-36 overflow-hidden"
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-
-        {/* Top row — label + headline + image */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-end mb-20 lg:mb-28">
-
-          {/* Left — headline */}
-          <div>
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[11px] tracking-[0.4em] uppercase text-stone-400 mb-5 font-light"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              Why Clients Choose Us
-            </motion.p>
-
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.75, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[clamp(2.2rem,4.5vw,3.8rem)] font-light text-stone-800 leading-[1.1] tracking-tight"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
-              Care that feels
-              <br />
-              like it was made
-              <br />
-              <em className="not-italic" style={{ color: "#B8714A" }}>
-                for you alone.
-              </em>
-            </motion.h2>
-          </div>
-
-          {/* Right — image */}
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="relative h-72 lg:h-96 overflow-hidden"
-          >
-            <Image
-              src="https://images.unsplash.com/photo-1629909615184-74f495363b67?w=1200&q=85&auto=format&fit=crop"
-              alt="Aureline Clinic interior — private consultation room"
-              fill
-              className="object-cover object-center"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-            {/* Warm overlay */}
-            <div className="absolute inset-0 bg-[#B8714A]/6" />
-          </motion.div>
-        </div>
-
-        {/* Differentiators grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-0">
-          {DIFFERENTIATORS.map((item, i) => (
-            <motion.div
-              key={item.number}
-              initial={{ opacity: 0, y: 24 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: 0.7,
-                delay: 0.25 + i * 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="group py-8 border-t border-stone-100 flex gap-8 items-start"
-            >
-              {/* Number */}
-              <span
-                className="text-[11px] tracking-[0.2em] text-stone-300 font-light pt-1 flex-shrink-0 group-hover:text-[#B8714A] transition-colors duration-300"
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
-              >
-                {item.number}
-              </span>
-
-              {/* Content */}
-              <div>
-                <h3
-                  className="text-lg font-light text-stone-800 mb-3 leading-snug"
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                >
-                  {item.title}
-                </h3>
-                <p
-                  className="text-[13px] leading-relaxed text-stone-400 font-light"
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                >
-                  {item.body}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Bottom pull quote */}
+    <section id="why-choose" className="bg-[#FAF8F5] py-24 md:py-32">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12 lg:px-20">
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-20 lg:mt-28 border-t border-stone-100 pt-12 max-w-2xl"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="mb-20 md:mb-28"
         >
-          <p
-            className="text-[clamp(1.2rem,2.5vw,1.7rem)] font-light text-stone-500 leading-relaxed italic"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
-          >
-            "We measure success not by how many clients we see, but by how many
-            return — and how many send their closest friends."
-          </p>
-          <div className="flex items-center gap-4 mt-6">
-            <div className="w-8 h-px bg-[#B8714A]" />
-            <span
-              className="text-[11px] tracking-[0.25em] uppercase text-stone-400 font-light"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              Dr. Isabelle Moreau · Clinical Director
-            </span>
-          </div>
+          <span className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.25em] text-[#C9A96E] font-sans mb-4">
+            <span className="w-8 h-px bg-[#C9A96E]" />
+            Why Aureline
+          </span>
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1E2A44] leading-[1.1] max-w-2xl">
+            Four reasons clients choose{" "}
+            <span className="italic text-[#C9A96E]/80">us</span>
+          </h2>
         </motion.div>
 
+        {/* Reasons */}
+        <div className="space-y-24 md:space-y-32">
+          {reasons.map((reason, index) => (
+            <ReasonBlock key={reason.number} reason={reason} index={index} />
+          ))}
+        </div>
       </div>
     </section>
   );
