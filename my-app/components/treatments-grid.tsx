@@ -1,256 +1,181 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
+import React from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 
-const TREATMENTS = [
+interface Treatment {
+  slug: string;
+  title: string;
+  description: string;
+  priceFrom: number;
+  image: string;
+  size: "large" | "medium" | "standard";
+}
+
+const treatments: Treatment[] = [
   {
-    name: "Botox & Anti-Wrinkle",
     slug: "botox",
-    tagline: "Softened expression lines with natural movement preserved.",
-    from: "£195",
-    duration: "30 min",
-    image: "https://images.unsplash.com/photo-1598524374912-e2a9e5e8c60a?w=800&q=80&auto=format&fit=crop",
+    title: "Botox",
+    description: "Smooth expression lines while preserving natural movement",
+    priceFrom: 250,
+    image:
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1000&auto=format&fit=crop",
+    size: "large",
   },
   {
-    name: "Lip Enhancement",
-    slug: "lip-enhancement",
-    tagline: "Refined volume and definition. Never overcorrected.",
-    from: "£250",
-    duration: "45 min",
-    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80&auto=format&fit=crop",
+    slug: "lip-fillers",
+    title: "Lip Enhancement",
+    description: "Subtle volume and definition for balanced proportions",
+    priceFrom: 350,
+    image:
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1000&auto=format&fit=crop",
+    size: "large",
   },
   {
-    name: "Skin Rejuvenation",
     slug: "skin-rejuvenation",
-    tagline: "Restored luminosity through targeted dermal therapies.",
-    from: "£280",
-    duration: "60 min",
-    image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80&auto=format&fit=crop",
+    title: "Skin Rejuvenation",
+    description: "Restore radiance and even tone with advanced techniques",
+    priceFrom: 400,
+    image:
+      "https://images.unsplash.com/photo-1552693673-1bf958298935?q=80&w=1000&auto=format&fit=crop",
+    size: "medium",
   },
   {
-    name: "PRP Therapy",
     slug: "prp-therapy",
-    tagline: "Your body's own regenerative power, amplified.",
-    from: "£350",
-    duration: "75 min",
-    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&q=80&auto=format&fit=crop",
+    title: "PRP Therapy",
+    description: "Harness your body's own regenerative potential",
+    priceFrom: 450,
+    image:
+      "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=1000&auto=format&fit=crop",
+    size: "medium",
   },
   {
-    name: "Facial Contouring",
     slug: "facial-contouring",
-    tagline: "Sculpted definition that honours your natural architecture.",
-    from: "£320",
-    duration: "60 min",
-    image: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800&q=80&auto=format&fit=crop",
+    title: "Facial Contouring",
+    description: "Sculpted, balanced features with precision techniques",
+    priceFrom: 600,
+    image:
+      "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?q=80&w=1000&auto=format&fit=crop",
+    size: "standard",
   },
   {
-    name: "Chemical Peels",
     slug: "chemical-peels",
-    tagline: "Surface renewal with clinical-grade precision.",
-    from: "£175",
-    duration: "45 min",
-    image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800&q=80&auto=format&fit=crop",
+    title: "Chemical Peels",
+    description: "Reveal fresh, renewed skin with clinical-grade solutions",
+    priceFrom: 200,
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
+    size: "standard",
   },
 ];
-
-function useInView(threshold = 0.1) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          obs.disconnect();
-        }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-
-  return [ref, inView] as const;
-}
 
 function TreatmentCard({
   treatment,
   index,
-  inView,
 }: {
-  treatment: (typeof TREATMENTS)[0];
+  treatment: Treatment;
   index: number;
-  inView: boolean;
 }) {
+  const sizeClasses = {
+    large: "md:col-span-2 md:row-span-2",
+    medium: "md:col-span-1 md:row-span-2",
+    standard: "md:col-span-1 md:row-span-1",
+  };
+
+  const imageHeight = {
+    large: "h-64 md:h-80",
+    medium: "h-64 md:h-72",
+    standard: "h-48 md:h-56",
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{
         duration: 0.7,
-        delay: index * 0.09,
-        ease: [0.22, 1, 0.36, 1],
+        delay: index * 0.1,
+        ease: [0.25, 0.46, 0.45, 0.94],
       }}
-      className="group relative overflow-hidden bg-stone-50 border border-stone-100 hover:border-stone-200 transition-colors duration-500"
+      className={sizeClasses[treatment.size]}
     >
-      {/* Image */}
-      <div className="relative h-64 overflow-hidden">
-        <Image
-          src={treatment.image}
-          alt={treatment.name}
-          fill
-          className="object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-        {/* Subtle dark overlay on hover */}
-        <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-500" />
-
-        {/* Duration pill */}
-        <div className="absolute top-4 right-4">
-          <span
-            className="text-[10px] tracking-[0.2em] uppercase bg-[#FAF8F5]/90 backdrop-blur-sm text-stone-500 px-3 py-1.5 font-light"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            {treatment.duration}
-          </span>
+      <Link
+        href={`/treatments/${treatment.slug}`}
+        className="group block h-full border border-stone-200/80 bg-white transition-all duration-500 hover:border-[#C9A96E]/60"
+      >
+        {/* Image Container */}
+        <div className={`relative ${imageHeight[treatment.size]} overflow-hidden`}>
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            style={{ backgroundImage: `url('${treatment.image}')` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="p-6">
-        {/* Name */}
-        <h3
-          className="text-xl font-light text-stone-800 mb-2 leading-snug"
-          style={{ fontFamily: "'Cormorant Garamond', serif" }}
-        >
-          {treatment.name}
-        </h3>
-
-        {/* Tagline */}
-        <p
-          className="text-[13px] leading-relaxed text-stone-400 font-light mb-6"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          {treatment.tagline}
-        </p>
-
-        {/* Footer row */}
-        <div className="flex items-center justify-between">
-          {/* Price */}
-          <div className="flex flex-col">
-            <span
-              className="text-[10px] tracking-[0.2em] uppercase text-stone-300 font-light mb-0.5"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              From
-            </span>
-            <span
-              className="text-lg font-light text-stone-700"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
-              {treatment.from}
+        {/* Content */}
+        <div className="p-5 md:p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-serif text-xl md:text-2xl text-[#1E2A44]">
+                {treatment.title}
+              </h3>
+              <ArrowUpRight
+                size={18}
+                strokeWidth={1.5}
+                className="text-stone-400 transition-all duration-300 group-hover:text-[#C9A96E] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
+            </div>
+            <p className="text-sm text-stone-500 font-sans font-light leading-relaxed">
+              {treatment.description}
+            </p>
+          </div>
+          <div className="mt-4 pt-4 border-t border-stone-100">
+            <span className="text-[11px] uppercase tracking-[0.15em] text-stone-400 font-sans">
+              From £{treatment.priceFrom}
             </span>
           </div>
-
-          {/* CTA */}
-          <Link
-            href={`/treatments/${treatment.slug}`}
-            className="group/link inline-flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-stone-500 hover:text-stone-800 transition-colors duration-300 font-light"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            Learn More
-            <ArrowRight
-              size={12}
-              strokeWidth={1.5}
-              className="group-hover/link:translate-x-1 transition-transform duration-300"
-            />
-          </Link>
         </div>
-      </div>
-
-      {/* Bottom accent line — reveals on hover */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-[#B8714A] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+      </Link>
     </motion.div>
   );
 }
 
 export default function TreatmentsGrid() {
-  const [sectionRef, inView] = useInView(0.1);
-
   return (
-    <section
-      ref={sectionRef}
-      className="bg-[#FAF8F5] py-24 lg:py-32"
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-
+    <section className="bg-[#FAF8F5] py-24 md:py-32">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12 lg:px-20">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div>
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[11px] tracking-[0.4em] uppercase text-stone-400 mb-4 font-light"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              Our Treatments
-            </motion.p>
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[clamp(2rem,4vw,3.2rem)] font-light text-stone-800 leading-tight max-w-sm"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
-              Expertly tailored.
-              <br />
-              <em className="not-italic" style={{ color: "#B8714A" }}>
-                Always personal.
-              </em>
-            </motion.h2>
-          </div>
-
-          {/* View All Link */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <Link
-              href="/treatments"
-              className="group inline-flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-stone-400 hover:text-stone-700 transition-colors duration-300 font-light"
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
-            >
-              View All Treatments
-              <ArrowRight
-                size={12}
-                strokeWidth={1.5}
-                className="group-hover:translate-x-1 transition-transform duration-300"
-              />
-            </Link>
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="mb-16 md:mb-20"
+        >
+          <span className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.25em] text-[#C9A96E] font-sans mb-4">
+            <span className="w-8 h-px bg-[#C9A96E]" />
+            Our Treatments
+          </span>
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#1E2A44] leading-[1.1] max-w-2xl">
+            Treatments tailored to{" "}
+            <span className="italic text-[#C9A96E]/80">enhance</span> your
+            natural features
+          </h2>
+        </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {TREATMENTS.map((treatment, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+          {treatments.map((treatment, index) => (
             <TreatmentCard
               key={treatment.slug}
               treatment={treatment}
-              index={i}
-              inView={inView}
+              index={index}
             />
           ))}
         </div>
-
       </div>
     </section>
   );
