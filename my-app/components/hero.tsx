@@ -1,161 +1,133 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-
-const FADE_UP = {
-  hidden: { opacity: 0, y: 24 },
-  show: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { 
-      duration: 0.9, 
-      ease: [0.22, 1, 0.36, 1] as const,  // ← add `as const` here
-      delay 
-    },
-  }),
-};
-
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowDown, Calendar, ChevronRight } from "lucide-react";
 
 export default function Hero() {
-  const parallaxRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
 
-  useEffect(() => {
-    const onScroll = () => {
-      if (!parallaxRef.current) return;
-      const y = window.scrollY;
-      parallaxRef.current.style.transform = `translateY(${y * 0.3}px)`;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section className="relative h-screen min-h-[700px] max-h-[1000px] overflow-hidden">
-
+    <section
+      ref={containerRef}
+      className="relative h-screen min-h-[700px] max-h-[1200px] overflow-hidden"
+    >
       {/* Background Image with Parallax */}
-      <div ref={parallaxRef} className="absolute inset-0 scale-110 will-change-transform">
-        <Image
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1800&q=85&auto=format&fit=crop"
-          alt="Aureline Clinic — Premium Aesthetic Treatments London"
-          fill
-          priority
-          className="object-cover object-center"
-          sizes="100vw"
+      <motion.div
+        style={{ y: imageY }}
+        className="absolute inset-0 z-0"
+      >
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2940&auto=format&fit=crop')`,
+          }}
         />
-        {/* Layered overlays for depth */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5]/80 via-[#FAF8F5]/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F5]/60 via-transparent to-transparent" />
-      </div>
+        {/* Gradient Overlay — bottom heavy for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1E2A44]/90 via-[#1E2A44]/40 to-[#1E2A44]/20" />
+        {/* Subtle vignette */}
+        <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.3)]" />
+      </motion.div>
 
       {/* Content */}
-      <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-12 flex flex-col justify-end pb-20 md:pb-28">
-
-        {/* Eyebrow */}
-        <motion.p
-          variants={FADE_UP}
-          initial="hidden"
-          animate="show"
-          custom={0.2}
-          className="text-[11px] tracking-[0.4em] uppercase text-stone-500 mb-6 font-light"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Mayfair, London · Est. 2016
-        </motion.p>
-
-        {/* Headline */}
-        <div className="overflow-hidden mb-4">
-          <motion.h1
-            variants={FADE_UP}
-            initial="hidden"
-            animate="show"
-            custom={0.35}
-            className="text-[clamp(2.6rem,6vw,5.2rem)] font-light leading-[1.08] tracking-tight text-stone-800 max-w-2xl"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
-          >
-            Refined aesthetics.
-            <br />
-            <em className="not-italic" style={{ color: "#B8714A" }}>
-              Naturally you.
-            </em>
-          </motion.h1>
-        </div>
-
-        {/* Subtext */}
-        <motion.p
-          variants={FADE_UP}
-          initial="hidden"
-          animate="show"
-          custom={0.5}
-          className="text-[15px] leading-relaxed text-stone-500 font-light max-w-md mb-10"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Expert-led treatments designed around your anatomy, your goals,
-          and the results you actually want.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          variants={FADE_UP}
-          initial="hidden"
-          animate="show"
-          custom={0.65}
-          className="flex flex-col sm:flex-row items-start gap-4"
-        >
-          <Link
-            href="/consultation"
-            className="group inline-flex items-center gap-3 px-8 py-4 bg-stone-800 text-[#FAF8F5] text-[12px] tracking-[0.2em] uppercase font-light hover:bg-stone-700 transition-colors duration-300"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            Book Consultation
-            <ArrowRight
-              size={14}
-              strokeWidth={1.5}
-              className="group-hover:translate-x-1 transition-transform duration-300"
-            />
-          </Link>
-
-          <Link
-            href="/treatments"
-            className="group inline-flex items-center gap-3 px-8 py-4 border border-stone-300 text-stone-700 text-[12px] tracking-[0.2em] uppercase font-light hover:border-stone-500 hover:text-stone-900 transition-all duration-300"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            View Treatments
-          </Link>
-        </motion.div>
-      </div>
-
-      {/* Bottom detail line */}
       <motion.div
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ duration: 1.2, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute bottom-0 left-0 right-0 h-px bg-stone-200/80 origin-left"
-      />
+        style={{ opacity }}
+        className="relative z-10 h-full flex flex-col justify-end pb-20 md:pb-28 lg:pb-32"
+      >
+        <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12 lg:px-20">
+          {/* Location Tag */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="mb-6 md:mb-8"
+          >
+            <span className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-[#C9A96E]/80 font-sans">
+              <span className="w-8 h-px bg-[#C9A96E]/60" />
+              Mayfair, London
+            </span>
+          </motion.div>
 
-      {/* Scroll indicator */}
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[110px] text-white leading-[0.95] tracking-[-0.02em] max-w-5xl"
+          >
+            Refined aesthetic
+            <br />
+            <span className="italic text-[#C9A96E]/90">treatments</span>
+            <br />
+            for natural results
+          </motion.h1>
+
+          {/* Subheadline */}
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="mt-6 md:mt-8 text-base md:text-lg text-white/60 font-sans font-light max-w-xl leading-relaxed"
+          >
+            Private consultations in the heart of London. Expert care,
+            understated elegance, results that speak softly.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="mt-10 md:mt-12 flex flex-col sm:flex-row gap-4"
+          >
+            <Link
+              href="/consultation"
+              className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#C9A96E] text-[#1E2A44] text-[13px] uppercase tracking-[0.15em] font-sans font-medium transition-all duration-300 hover:bg-[#B8985E] hover:shadow-[0_0_30px_rgba(201,169,110,0.2)]"
+            >
+              <Calendar size={16} strokeWidth={1.5} />
+              Book Consultation
+            </Link>
+
+            <Link
+              href="/treatments"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 border border-white/20 text-white/80 text-[13px] uppercase tracking-[0.15em] font-sans transition-all duration-300 hover:border-white/40 hover:text-white"
+            >
+              View Treatments
+              <ChevronRight
+                size={14}
+                strokeWidth={1.5}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      {/* Scroll Indicator — subtle, bottom right */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 0.8 }}
-        className="absolute bottom-8 right-6 lg:right-12 flex flex-col items-center gap-2"
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-8 right-6 md:right-12 lg:right-20 z-10 hidden md:flex flex-col items-center gap-2"
       >
-        <span
-          className="text-[9px] tracking-[0.35em] uppercase text-stone-400 rotate-90 origin-center"
-          style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
+        <span className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-sans rotate-90 origin-center translate-x-4">
           Scroll
         </span>
         <motion.div
-          animate={{ y: [0, 6, 0] }}
+          animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-px h-8 bg-gradient-to-b from-stone-400 to-transparent"
-        />
+        >
+          <ArrowDown size={14} strokeWidth={1} className="text-white/30" />
+        </motion.div>
       </motion.div>
-
     </section>
   );
 }
