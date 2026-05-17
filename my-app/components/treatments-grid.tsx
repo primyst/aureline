@@ -30,7 +30,7 @@ const treatments: Treatment[] = [
     description: "Subtle volume and definition for balanced proportions",
     priceFrom: 350,
     image:
-      "lip.jgp",
+      "lip.jpg",
     size: "large",
   },
   {
