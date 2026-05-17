@@ -21,7 +21,7 @@ const treatments: Treatment[] = [
     description: "Smooth expression lines while preserving natural movement",
     priceFrom: 250,
     image:
-      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1000&auto=format&fit=crop",
+      "botox.jpg",
     size: "large",
   },
   {
@@ -30,7 +30,7 @@ const treatments: Treatment[] = [
     description: "Subtle volume and definition for balanced proportions",
     priceFrom: 350,
     image:
-      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1000&auto=format&fit=crop",
+      "lip.jgp",
     size: "large",
   },
   {
@@ -39,7 +39,7 @@ const treatments: Treatment[] = [
     description: "Restore radiance and even tone with advanced techniques",
     priceFrom: 400,
     image:
-      "https://images.unsplash.com/photo-1552693673-1bf958298935?q=80&w=1000&auto=format&fit=crop",
+      "skin.jpg",
     size: "medium",
   },
   {
@@ -48,7 +48,7 @@ const treatments: Treatment[] = [
     description: "Harness your body's own regenerative potential",
     priceFrom: 450,
     image:
-      "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=1000&auto=format&fit=crop",
+      "prp.jpg",
     size: "medium",
   },
   {
@@ -57,7 +57,7 @@ const treatments: Treatment[] = [
     description: "Sculpted, balanced features with precision techniques",
     priceFrom: 600,
     image:
-      "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?q=80&w=1000&auto=format&fit=crop",
+      "contouring.jpg",
     size: "standard",
   },
   {
@@ -66,7 +66,7 @@ const treatments: Treatment[] = [
     description: "Reveal fresh, renewed skin with clinical-grade solutions",
     priceFrom: 200,
     image:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
+      "peel.jpg",
     size: "standard",
   },
 ];
