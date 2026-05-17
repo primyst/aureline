@@ -13,17 +13,17 @@ interface SlideImage {
 const slides: SlideImage[] = [
   {
     before:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop",
+      "face-before.png",
     after:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop",
+      "face-after.png",
     caption: "Subtle enhancement. Visible confidence.",
     treatment: "Skin Rejuvenation",
   },
   {
     before:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
+      "lip-before.jpg",
     after:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop",
+      "lip-after.jpg",
     caption: "Natural volume. Balanced proportions.",
     treatment: "Lip Enhancement",
   },
