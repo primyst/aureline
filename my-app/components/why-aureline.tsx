@@ -28,7 +28,7 @@ const reasons: Reason[] = [
     description:
       "Led by practitioners with 15+ years in aesthetic medicine. Our team combines clinical precision with an artistic eye — because the face is not just anatomy, it's identity. Every injection is deliberate, every placement is considered.",
     image:
-      "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=1000&auto=format&fit=crop",
+      "nurses.jpg",
     icon: <Shield size={20} strokeWidth={1.5} />,
   },
   {
