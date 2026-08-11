@@ -1,181 +1,226 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 
-interface Treatment {
-  slug: string;
-  title: string;
-  description: string;
-  priceFrom: number;
-  image: string;
-  size: "large" | "medium" | "standard";
-}
-
-const treatments: Treatment[] = [
+const treatments = [
   {
     slug: "botox",
-    title: "Botox",
-    description: "Smooth expression lines while preserving natural movement",
-    priceFrom: 250,
+    number: "01",
+    title: "Botox & Anti-Wrinkle",
+    category: "Injectables",
+    description:
+      "Soften expression lines while preserving natural movement and the character of your face.",
+    price: "From £195",
+    duration: "30 min",
     image: "/botox.jpg",
-    size: "large",
   },
   {
-    slug: "lip-fillers",
+    slug: "lip-enhancement",
+    number: "02",
     title: "Lip Enhancement",
-    description: "Subtle volume and definition for balanced proportions",
-    priceFrom: 350,
+    category: "Injectables",
+    description:
+      "Subtle volume, definition and balance, tailored to your natural proportions.",
+    price: "From £250",
+    duration: "45 min",
     image: "/lip.jpg",
-    size: "large",
   },
   {
     slug: "skin-rejuvenation",
+    number: "03",
     title: "Skin Rejuvenation",
-    description: "Restore radiance and even tone with advanced techniques",
-    priceFrom: 400,
+    category: "Skin",
+    description:
+      "Restore radiance and support a smoother, brighter and more even-looking complexion.",
+    price: "From £280",
+    duration: "60 min",
     image: "/skin.jpg",
-    size: "medium",
   },
   {
     slug: "prp-therapy",
+    number: "04",
     title: "PRP Therapy",
-    description: "Harness your body's own regenerative potential",
-    priceFrom: 450,
+    category: "Regenerative",
+    description:
+      "A regenerative approach using your own platelet-rich plasma to support skin renewal.",
+    price: "From £350",
+    duration: "75 min",
     image: "/prp.jpg",
-    size: "medium",
   },
   {
     slug: "facial-contouring",
+    number: "05",
     title: "Facial Contouring",
-    description: "Sculpted, balanced features with precision techniques",
-    priceFrom: 600,
+    category: "Injectables",
+    description:
+      "Refined definition and balance using a considered approach to facial structure.",
+    price: "From £320",
+    duration: "60 min",
     image: "/contouring.jpg",
-    size: "standard",
   },
   {
     slug: "chemical-peels",
+    number: "06",
     title: "Chemical Peels",
-    description: "Reveal fresh, renewed skin with clinical-grade solutions",
-    priceFrom: 200,
+    category: "Skin",
+    description:
+      "Clinical-grade peels selected to refine texture, brighten the complexion and support clearer-looking skin.",
+    price: "From £175",
+    duration: "45 min",
     image: "/peel.jpg",
-    size: "standard",
   },
 ];
 
-function TreatmentCard({
-  treatment,
-  index,
-}: {
-  treatment: Treatment;
-  index: number;
-}) {
-  const sizeClasses = {
-    large: "md:col-span-2 md:row-span-2",
-    medium: "md:col-span-1 md:row-span-2",
-    standard: "md:col-span-1 md:row-span-1",
-  };
-
-  const imageHeight = {
-    large: "h-64 md:h-80",
-    medium: "h-64 md:h-72",
-    standard: "h-48 md:h-56",
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{
-        duration: 0.7,
-        delay: index * 0.1,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      }}
-      className={sizeClasses[treatment.size]}
-    >
-      <Link
-        href={`/treatments/${treatment.slug}`}
-        className="group block h-full border border-stone-200/80 bg-white transition-all duration-500 hover:border-[#C9A96E]/60"
-      >
-        <div className={`relative ${imageHeight[treatment.size]} overflow-hidden`}>
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-            style={{ backgroundImage: `url('${treatment.image}')` }}
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        </div>
-
-        <div className="p-5 md:p-6 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-serif text-xl md:text-2xl text-[#1E2A44]">
-                {treatment.title}
-              </h3>
-              <ArrowUpRight
-                size={18}
-                strokeWidth={1.5}
-                className="text-stone-400 transition-all duration-300 group-hover:text-[#C9A96E] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </div>
-            <p className="text-sm text-stone-500 font-sans font-light leading-relaxed">
-              {treatment.description}
-            </p>
-          </div>
-          <div className="mt-4 pt-4 border-t border-stone-100">
-            <span className="text-[11px] uppercase tracking-[0.15em] text-stone-400 font-sans">
-              From £{treatment.priceFrom}
-            </span>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
-
 export default function TreatmentsPage() {
   return (
-    <main className="bg-[#FAF8F5]">
+    <main className="bg-[#FAF8F5] text-stone-800">
       {/* Hero */}
-      <section className="relative bg-[#1E2A44] py-24 md:py-32">
+      <section className="relative overflow-hidden bg-[#1E2A44] py-24 md:py-32 lg:py-36">
         <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle_at_center,_#C9A96E_1px,_transparent_1px)] bg-[length:40px_40px]" />
         <div className="relative z-10 mx-auto max-w-[1440px] px-6 md:px-12 lg:px-20">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-3xl"
           >
-            <span className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.25em] text-[#C9A96E]/60 font-sans mb-4">
-              <span className="w-8 h-px bg-[#C9A96E]/40" />
+            <div className="mb-5 flex items-center gap-3 text-[10px] font-sans font-light uppercase tracking-[0.3em] text-[#C9A96E]/70">
+              <span className="h-px w-9 bg-[#C9A96E]/50" />
               Our Treatments
-            </span>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white leading-[1.05] mb-6">
-              Treatments tailored to{" "}
-              <span className="italic text-[#C9A96E]/80">enhance</span> your
-              natural features
+            </div>
+            <h1 className="font-serif text-5xl font-light leading-[0.98] tracking-[-0.02em] text-white md:text-6xl lg:text-7xl">
+              Thoughtful treatments.
+              <br />
+              <span className="italic text-[#C9A96E]/90">Considered results.</span>
             </h1>
-            <p className="text-white/50 font-sans font-light text-lg max-w-xl leading-relaxed">
-              Each treatment is personalized to your unique facial structure,
-              skin type, and aesthetic goals. No one-size-fits-all.
+            <p className="mt-7 max-w-xl font-sans text-sm font-light leading-7 text-white/55 md:text-base">
+              From subtle enhancements to skin-focused treatments, every treatment begins with a consultation designed around you.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Grid */}
-      <section className="py-24 md:py-32">
+      {/* Treatment catalogue */}
+      <section className="py-20 md:py-28 lg:py-36">
         <div className="mx-auto max-w-[1440px] px-6 md:px-12 lg:px-20">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-            {treatments.map((treatment, index) => (
-              <TreatmentCard
-                key={treatment.slug}
-                treatment={treatment}
-                index={index}
-              />
-            ))}
+          <div className="mb-12 flex items-end justify-between gap-8 border-b border-stone-200 pb-6 md:mb-16">
+            <div>
+              <p className="mb-2 font-sans text-[10px] font-light uppercase tracking-[0.25em] text-stone-400">
+                The Aureline approach
+              </p>
+              <p className="max-w-xl font-sans text-sm font-light leading-6 text-stone-500">
+                Every treatment is selected around your features, skin and goals. Explore a treatment below to learn more.
+              </p>
+            </div>
+            <span className="hidden font-sans text-[10px] font-light uppercase tracking-[0.2em] text-stone-300 md:block">
+              06 Treatments
+            </span>
           </div>
+
+          <div className="space-y-20 md:space-y-28">
+            {treatments.map((treatment, index) => {
+              const reversed = index % 2 === 1;
+
+              return (
+                <motion.article
+                  key={treatment.slug}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                  className="grid overflow-hidden border-t border-stone-200 pt-0 lg:grid-cols-2"
+                >
+                  <Link
+                    href={`/treatments/${treatment.slug}`}
+                    className={`group relative block aspect-[4/3] overflow-hidden bg-stone-100 lg:aspect-auto lg:min-h-[520px] ${
+                      reversed ? "lg:order-2" : ""
+                    }`}
+                  >
+                    <img
+                      src={treatment.image}
+                      alt={treatment.title}
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.035]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E2A44]/25 via-transparent to-transparent opacity-60" />
+                    <span className="absolute left-6 top-6 font-sans text-[10px] font-light tracking-[0.25em] text-white/80">
+                      {treatment.number}
+                    </span>
+                    <span className="absolute bottom-6 right-6 flex h-10 w-10 items-center justify-center rounded-full border border-white/40 bg-black/5 text-white backdrop-blur-sm transition-all duration-300 group-hover:bg-white group-hover:text-[#1E2A44]">
+                      <ArrowUpRight size={16} strokeWidth={1.4} />
+                    </span>
+                  </Link>
+
+                  <div
+                    className={`flex min-h-[420px] flex-col justify-center px-0 py-10 md:px-8 lg:px-16 lg:py-16 ${
+                      reversed ? "lg:order-1" : ""
+                    }`}
+                  >
+                    <p className="mb-4 font-sans text-[10px] font-light uppercase tracking-[0.25em] text-stone-400">
+                      {treatment.category}
+                    </p>
+                    <h2 className="font-serif text-4xl font-light leading-[0.98] tracking-[-0.02em] text-[#1E2A44] md:text-5xl">
+                      {treatment.title}
+                    </h2>
+                    <p className="mt-6 max-w-md font-sans text-sm font-light leading-7 text-stone-500">
+                      {treatment.description}
+                    </p>
+
+                    <div className="mt-7 flex items-center gap-5 font-sans text-[10px] font-light uppercase tracking-[0.2em] text-stone-400">
+                      <span>{treatment.price}</span>
+                      <span className="h-1 w-1 rounded-full bg-stone-300" />
+                      <span>{treatment.duration}</span>
+                    </div>
+
+                    <div className="mt-9 flex flex-wrap items-center gap-7">
+                      <Link
+                        href={`/treatments/${treatment.slug}`}
+                        className="group/link inline-flex items-center gap-3 font-sans text-[10px] font-light uppercase tracking-[0.2em] text-[#1E2A44]"
+                      >
+                        Explore treatment
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={1.5}
+                          className="transition-transform duration-300 group-hover/link:translate-x-1"
+                        />
+                      </Link>
+                      <Link
+                        href="/consultation"
+                        className="font-sans text-[10px] font-light uppercase tracking-[0.2em] text-stone-400 transition-colors hover:text-[#1E2A44]"
+                      >
+                        Book consultation
+                      </Link>
+                    </div>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Consultation CTA */}
+      <section className="border-t border-stone-200 bg-[#F3F0EB] px-6 py-24 md:py-32 lg:px-16 lg:py-36">
+        <div className="mx-auto max-w-5xl text-center">
+          <p className="mb-5 font-sans text-[10px] font-light uppercase tracking-[0.3em] text-stone-400">
+            Not sure where to begin?
+          </p>
+          <h2 className="font-serif text-4xl font-light leading-none tracking-[-0.02em] text-[#1E2A44] md:text-6xl">
+            Every treatment begins
+            <br />
+            with a conversation.
+          </h2>
+          <p className="mx-auto mt-7 max-w-lg font-sans text-sm font-light leading-7 text-stone-500">
+            Tell us what you&apos;re looking to achieve and we&apos;ll help you find the right approach for you.
+          </p>
+          <Link
+            href="/consultation"
+            className="mt-9 inline-flex items-center gap-3 bg-[#1E2A44] px-8 py-4 font-sans text-[10px] font-light uppercase tracking-[0.22em] text-[#FAF8F5] transition-colors hover:bg-[#2A3957]"
+          >
+            Book a Consultation
+            <ArrowRight size={14} strokeWidth={1.5} />
+          </Link>
         </div>
       </section>
     </main>
