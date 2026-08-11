@@ -477,6 +477,10 @@ export default function ConsultationPage() {
     notes: "",
   });
 
+useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}, [step]);
+
   const updateField = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
