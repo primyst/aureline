@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, ArrowLeft, Check, Calendar, Clock, User } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -42,9 +42,9 @@ const FADE = {
   initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -12 },
-  transition: { 
-    duration: 0.35, 
-    ease: [0.22, 1, 0.36, 1] as const // Add 'as const' for type safety
+  transition: {
+    duration: 0.35,
+    ease: [0.22, 1, 0.36, 1] as const
   },
 };
 
@@ -462,12 +462,18 @@ function StepReview({
 
 export default function ConsultationPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const treatmentFromUrl = searchParams.get("treatment");
+  
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   const [form, setForm] = useState<FormState>({
-    treatment: "",
+    treatment: TREATMENTS.some((t) => t.slug === treatmentFromUrl)
+      ? treatmentFromUrl!
+      : "",
     date: "",
     slotId: "",
     selectedSlot: null,
@@ -477,9 +483,20 @@ export default function ConsultationPage() {
     notes: "",
   });
 
-useEffect(() => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}, [step]);
+  // Auto-advance to step 2 if treatment came from URL
+  useEffect(() => {
+    if (
+      treatmentFromUrl &&
+      TREATMENTS.some((t) => t.slug === treatmentFromUrl)
+    ) {
+      setStep(1);
+    }
+  }, [treatmentFromUrl]);
+
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
 
   const updateField = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
