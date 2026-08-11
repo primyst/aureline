@@ -9,20 +9,26 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "framer-motion": "^12.23.25",
     "lucide-react": "^0.556.0",
+    "mongoose": "^9.9.2",
     "next": "16.1.1",
+    "nodemailer": "^9.0.5",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "typescript": "^5"
   }
 }
