@@ -4,9 +4,9 @@ import Booking from "@/lib/models/Booking";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { ref: string } }
+  { params }: { params: Promise<{ ref: string }> }
 ) {
-  const { ref } = params;
+  const { ref } = await params;
 
   // Validate reference format — AUR- followed by 8 alphanumeric characters
   if (!ref || !/^AUR-[A-Z0-9]{8}$/.test(ref)) {
