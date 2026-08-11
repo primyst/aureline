@@ -80,7 +80,7 @@ const treatmentsData: Record<string, TreatmentData> = {
       },
     ],
   },
-  "lip-fillers": {
+  "lip-enhancement": {
     slug: "lip-enhancement",
     title: "Lip Enhancement",
     subtitle: "Subtle volume and definition for balanced proportions",
@@ -593,7 +593,7 @@ export default function TreatmentPage() {
 
                 <div className="mt-8 pt-8 border-t border-stone-100">
                   <Link
-                    href="/consultation"
+                    href={`/consultation?treatment=${treatment.slug}`}
                     className="group flex items-center justify-center gap-3 w-full py-4 bg-[#C9A96E] text-[#1E2A44] text-[13px] uppercase tracking-[0.12em] font-sans font-medium transition-all duration-300 hover:bg-[#B8985E]"
                   >
                     <Calendar size={16} strokeWidth={1.5} />
