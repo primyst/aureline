@@ -38,7 +38,6 @@ const PRACTITIONERS = [
   },
 ];
 
-// 30-minute appointment start times, 09:00–16:30.
 const TIMES = [
   "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
   "12:00", "12:30", "13:30", "14:00", "14:30", "15:00",
@@ -72,6 +71,28 @@ async function seed() {
   await mongoose.connect(MONGODB_URI);
   console.log("Connected to MongoDB.");
 
+  // The database may still contain the old unique index from the previous
+  // Slot schema: practitionerId + date + time. That index prevents one
+  // practitioner from having the same start time for multiple treatments.
+  // Remove stale indexes first, then let Mongoose create the current index.
+  const existingIndexes = await Slot.collection.indexes();
+  for (const index of existingIndexes) {
+    const key = index.key as Record<string, number>;
+    const isOldSlotIndex =
+      key.practitionerId === 1 &&
+      key.date === 1 &&
+      key.time === 1 &&
+      !Object.prototype.hasOwnProperty.call(key, "treatment");
+
+    if (isOldSlotIndex && index.name) {
+      await Slot.collection.dropIndex(index.name);
+      console.log(`Dropped stale slot index: ${index.name}`);
+    }
+  }
+
+  await Slot.syncIndexes();
+  console.log("Slot indexes synchronized.");
+
   await Practitioner.deleteMany({});
   await Slot.deleteMany({});
   console.log("Cleared existing practitioners and slots.");
@@ -84,9 +105,6 @@ async function seed() {
 
   for (const practitioner of inserted) {
     for (const date of workdays) {
-      // Deterministic demo availability: every practitioner is available at
-      // every defined start time. This prevents a valid treatment from
-      // randomly appearing to have no availability.
       for (const time of TIMES) {
         for (const treatment of practitioner.treatments) {
           slots.push({
@@ -103,7 +121,7 @@ async function seed() {
     }
   }
 
-  await Slot.insertMany(slots, { ordered: false });
+  await Slot.insertMany(slots);
   console.log(`Inserted ${slots.length} deterministic slots across 14 workdays.`);
 
   await mongoose.disconnect();
