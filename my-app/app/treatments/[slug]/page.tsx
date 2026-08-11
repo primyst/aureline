@@ -81,7 +81,7 @@ const treatmentsData: Record<string, TreatmentData> = {
     ],
   },
   "lip-fillers": {
-    slug: "lip-fillers",
+    slug: "lip-enhancement",
     title: "Lip Enhancement",
     subtitle: "Subtle volume and definition for balanced proportions",
     description:
