@@ -38,7 +38,7 @@ const PRACTITIONERS = [
   },
 ];
 
-// Slot times — 30 min intervals, 9am–5pm
+// 30-minute appointment start times, 09:00–16:30.
 const TIMES = [
   "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
   "12:00", "12:30", "13:30", "14:00", "14:30", "15:00",
@@ -62,11 +62,9 @@ function getNextNWorkdays(n: number): Date[] {
   while (dates.length < n) {
     current.setDate(current.getDate() + 1);
     const day = current.getDay();
-    if (day !== 0 && day !== 6) {
-      // Mon–Fri only
-      dates.push(new Date(current));
-    }
+    if (day !== 0 && day !== 6) dates.push(new Date(current));
   }
+
   return dates;
 }
 
@@ -74,25 +72,22 @@ async function seed() {
   await mongoose.connect(MONGODB_URI);
   console.log("Connected to MongoDB.");
 
-  // Clear existing data
   await Practitioner.deleteMany({});
   await Slot.deleteMany({});
   console.log("Cleared existing practitioners and slots.");
 
-  // Insert practitioners
   const inserted = await Practitioner.insertMany(PRACTITIONERS);
   console.log(`Inserted ${inserted.length} practitioners.`);
 
-  // Generate slots for the next 14 workdays
   const workdays = getNextNWorkdays(14);
   const slots = [];
 
   for (const practitioner of inserted) {
     for (const date of workdays) {
-      // Each practitioner gets ~60% of slots (random availability)
-      const availableTimes = TIMES.filter(() => Math.random() > 0.4);
-
-      for (const time of availableTimes) {
+      // Deterministic demo availability: every practitioner is available at
+      // every defined start time. This prevents a valid treatment from
+      // randomly appearing to have no availability.
+      for (const time of TIMES) {
         for (const treatment of practitioner.treatments) {
           slots.push({
             practitionerId: practitioner._id,
@@ -109,7 +104,7 @@ async function seed() {
   }
 
   await Slot.insertMany(slots, { ordered: false });
-  console.log(`Inserted ${slots.length} slots across 14 workdays.`);
+  console.log(`Inserted ${slots.length} deterministic slots across 14 workdays.`);
 
   await mongoose.disconnect();
   console.log("Done. Database seeded successfully.");
