@@ -55,13 +55,19 @@ const TREATMENT_DURATION: Record<string, number> = {
 
 function getNextNWorkdays(n: number): Date[] {
   const dates: Date[] = [];
-  const current = new Date();
-  current.setHours(0, 0, 0, 0);
+  const now = new Date();
+  const londonDate = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/London",
+  }).format(now);
+  const [year, month, day] = londonDate.split("-").map(Number);
+  const current = new Date(Date.UTC(year, month - 1, day));
 
   while (dates.length < n) {
-    current.setDate(current.getDate() + 1);
-    const day = current.getDay();
-    if (day !== 0 && day !== 6) dates.push(new Date(current));
+    current.setUTCDate(current.getUTCDate() + 1);
+    const weekday = current.getUTCDay();
+    if (weekday !== 0 && weekday !== 6) {
+      dates.push(new Date(current));
+    }
   }
 
   return dates;
@@ -71,10 +77,6 @@ async function seed() {
   await mongoose.connect(MONGODB_URI);
   console.log("Connected to MongoDB.");
 
-  // The database may still contain the old unique index from the previous
-  // Slot schema: practitionerId + date + time. That index prevents one
-  // practitioner from having the same start time for multiple treatments.
-  // Remove stale indexes first, then let Mongoose create the current index.
   const existingIndexes = await Slot.collection.indexes();
   for (const index of existingIndexes) {
     const key = index.key as Record<string, number>;
@@ -110,7 +112,7 @@ async function seed() {
           slots.push({
             practitionerId: practitioner._id,
             treatment,
-            date: new Date(date),
+            date,
             time,
             duration: TREATMENT_DURATION[treatment] ?? 30,
             isBooked: false,
