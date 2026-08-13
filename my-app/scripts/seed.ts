@@ -1,6 +1,9 @@
 /**
  * Run with: npx tsx scripts/seed.ts
  * Make sure MONGODB_URI is in your .env.local
+ *
+ * IMPORTANT: Slot dates are stored as UTC midnight for a London calendar day.
+ * Never construct these dates with new Date("YYYY-MM-DD") or local-time setters.
  */
 
 import "dotenv/config";
@@ -10,6 +13,8 @@ import Slot from "../lib/models/Slot";
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 if (!MONGODB_URI) throw new Error("MONGODB_URI is not set.");
+
+const TIME_ZONE = "Europe/London";
 
 const PRACTITIONERS = [
   {
@@ -53,24 +58,55 @@ const TREATMENT_DURATION: Record<string, number> = {
   "chemical-peels": 45,
 };
 
+/**
+ * Returns the next N Monday-Friday calendar days in London.
+ *
+ * We deliberately represent a London calendar date as UTC midnight rather
+ * than using the server's local timezone. This makes the stored value stable
+ * on Vercel, locally, and regardless of DST.
+ */
+function londonCalendarDateToUtc(year: number, month: number, day: number): Date {
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function getLondonCalendarDate(): [number, number, number] {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  return [Number(values.year), Number(values.month), Number(values.day)];
+}
+
 function getNextNWorkdays(n: number): Date[] {
   const dates: Date[] = [];
-  const now = new Date();
-  const londonDate = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/London",
-  }).format(now);
-  const [year, month, day] = londonDate.split("-").map(Number);
-  const current = new Date(Date.UTC(year, month - 1, day));
+  const [year, month, day] = getLondonCalendarDate();
+  const current = londonCalendarDateToUtc(year, month, day);
 
   while (dates.length < n) {
     current.setUTCDate(current.getUTCDate() + 1);
     const weekday = current.getUTCDay();
+
     if (weekday !== 0 && weekday !== 6) {
       dates.push(new Date(current));
     }
   }
 
   return dates;
+}
+
+function assertUtcMidnight(date: Date) {
+  if (
+    date.getUTCHours() !== 0 ||
+    date.getUTCMinutes() !== 0 ||
+    date.getUTCSeconds() !== 0 ||
+    date.getUTCMilliseconds() !== 0
+  ) {
+    throw new Error(`Invalid slot date: ${date.toISOString()}. Expected UTC midnight.`);
+  }
 }
 
 async function seed() {
@@ -103,6 +139,8 @@ async function seed() {
   console.log(`Inserted ${inserted.length} practitioners.`);
 
   const workdays = getNextNWorkdays(14);
+  workdays.forEach(assertUtcMidnight);
+
   const slots = [];
 
   for (const practitioner of inserted) {
