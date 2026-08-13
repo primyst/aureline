@@ -31,12 +31,14 @@ async function getBooking(ref: string): Promise<BookingDetails | null> {
 export default async function ConfirmationPage({
   params,
 }: {
-  params: { ref: string };
+  params: Promise<{ ref: string }>;
 }) {
-  // Validate format before hitting the API
-  if (!/^AUR-[A-Z0-9]{8}$/.test(params.ref)) notFound();
+  const { ref } = await params;
 
-  const booking = await getBooking(params.ref);
+  // Validate format before hitting the API
+  if (!/^AUR-[A-Z0-9]{8}$/.test(ref)) notFound();
+
+  const booking = await getBooking(ref);
   if (!booking) notFound();
 
   const details = [
@@ -49,13 +51,10 @@ export default async function ConfirmationPage({
   return (
     <div className="min-h-screen bg-[#FAF8F5]">
       <div className="max-w-2xl mx-auto px-6 pt-36 pb-24">
-
-        {/* Success mark */}
         <div className="flex items-center justify-center w-14 h-14 bg-stone-800 mb-10">
           <Check size={22} strokeWidth={1.5} className="text-white" />
         </div>
 
-        {/* Heading */}
         <p
           className="text-[11px] tracking-[0.4em] uppercase text-stone-400 mb-3 font-light"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
@@ -80,7 +79,6 @@ export default async function ConfirmationPage({
           Please keep your reference number for your records.
         </p>
 
-        {/* Reference */}
         <div className="flex items-center gap-4 mb-10 pb-10 border-b border-stone-100">
           <div>
             <p
@@ -98,7 +96,6 @@ export default async function ConfirmationPage({
           </div>
         </div>
 
-        {/* Treatment */}
         <div className="mb-8 pb-8 border-b border-stone-100">
           <p
             className="text-[10px] tracking-[0.3em] uppercase text-stone-400 mb-2 font-light"
@@ -114,7 +111,6 @@ export default async function ConfirmationPage({
           </p>
         </div>
 
-        {/* Details */}
         <div className="flex flex-col gap-5 mb-12">
           {details.map(({ icon: Icon, label, value }) => (
             <div key={label} className="flex items-start gap-4">
@@ -137,7 +133,6 @@ export default async function ConfirmationPage({
           ))}
         </div>
 
-        {/* What happens next */}
         <div className="bg-stone-50 border border-stone-100 p-7 mb-10">
           <p
             className="text-[10px] tracking-[0.3em] uppercase text-stone-400 mb-5 font-light"
@@ -165,7 +160,6 @@ export default async function ConfirmationPage({
           </ul>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-col sm:flex-row items-start gap-4">
           <Link
             href="/"
@@ -184,7 +178,6 @@ export default async function ConfirmationPage({
             Contact Us
           </a>
         </div>
-
       </div>
     </div>
   );
